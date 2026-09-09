@@ -9,6 +9,7 @@ import Mathlib.Logic.Basic
 
 The arrow `→` has two readings that are always simultaneously true.
 
+
 **Computational reading**: `α → β` is the type of functions from `α` to `β`.
 A term of this type takes an input of type `α` and returns an output of
 type `β`.
@@ -43,6 +44,7 @@ def double' : Nat → Nat := fun n => n * 2
 
 #eval double 7    -- predict first
 #eval square 6    -- predict first
+
 
 -- Multi-argument functions are curried by default
 def add3 (a b c : Nat) : Nat := a + b + c
@@ -566,4 +568,34 @@ does it have when `A B C` are fully polymorphic, and why can the code not *inven
 This is the inverse of (a): where the derivation is forced, the reading is total.
 @@@ -/
 
-end Week02
+def id' (α : Sort u) : α → α := fun n => n
+
+#eval id' Nat 3
+#eval id' Bool true
+#eval id' (List Nat) [1, 2, 3]
+
+#check Nat.add
+#check Nat.add 3
+
+def myAdd := Nat.add
+#eval myAdd 3 4
+
+def add2 := Nat.add 2
+#eval add2 7
+
+def sum := Nat.add 3 4
+#check sum
+
+def f' : Nat → Nat → Nat → Nat  := fun a b c => 0
+-- the point is that this is left associative, as in compute the function from left to right, cascading the result to each nect parameter
+
+#check (((f' 0) 1) 2)
+
+-- Sort 0 means sort 0 1 2 etc, but don't really worry about it
+-- Lean does type inference, so you you don't say id' Bool true, you can say id' _ true
+-- it infers the type of 3 which is Nat
+-- instead of [List Nat] you can instead just use _
+
+-- any argument in {} is an implicit argument and it will implicitly infer the type of the argument, so you don't have to explicitly write it out
+
+-- ?m.1 is an unbound meta variable
