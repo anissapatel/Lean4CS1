@@ -75,3 +75,61 @@ rfl
 
 def swap_comm' {α β : Type u} (a : α) (b : β) :
   Eq (swap (swap (x, y))) (x, y) := Eq.refl (x, y)
+
+inductive Variable where
+| Xvar
+| Yvar
+| Zvar
+
+open Variable
+
+def varInterp : Type := Variable → Bool
+
+inductive PropLogicSyntax where
+| T
+| F
+| and (left right : PropLogicSyntax) : PropLogicSyntax
+| Or (left right : PropLogicSyntax) : PropLogicSyntax
+| Not (p : PropLogicSyntax)
+| Var (v : Variable)
+
+open PropLogicSyntax
+
+def X := PropLogicSyntax.Var Variable.Xvar
+def Y:= PropLogicSyntax.Var Variable.Yvar
+def Z := PropLogicSyntax.Var Variable.Zvar
+
+--something in this might not be right
+def i : varInterp := fun (v : Variable) =>
+    match v with
+    | .Xvar => true
+    | .Yvar => false
+    | .Zvar => true
+
+def eval : PropLogicSyntax → Bool
+| .T => true
+| .F => false
+| PropLogicSyntax.and p1 p2 => (eval p1) && (eval p2)
+| PropLogicSyntax.Or p1 p2 => (eval p1) || (eval p2)
+| PropLogicSyntax.Not p1 => !(eval p1)
+| PropLogicSyntax.Var v => i v
+
+
+-- _ =>  says default to whatever you write, so false here
+
+--eval turns a piece of syntax in a bool and so you use eval in the function
+
+def e1 := PropLogicSyntax.F
+def e2 := PropLogicSyntax.T
+def e3 := PropLogicSyntax.and e1 e2
+
+
+
+-- def e1 :=F
+-- def e2 := T
+-- this is all predicate logic
+
+
+#eval eval e1
+#eval eval e2
+#eval eval e3
