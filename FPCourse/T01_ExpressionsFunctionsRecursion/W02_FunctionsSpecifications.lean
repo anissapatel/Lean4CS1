@@ -568,7 +568,6 @@ does it have when `A B C` are fully polymorphic, and why can the code not *inven
 This is the inverse of (a): where the derivation is forced, the reading is total.
 @@@ -/
 
-<<<<<<< HEAD:FPCourse/T01_ExpressionsFunctionsRecursion/Week02_FunctionsSpecifications.lean
 def id' (α : Sort u) : α → α := fun n => n
 
 #eval id' Nat 3
@@ -600,6 +599,4 @@ def f' : Nat → Nat → Nat → Nat  := fun a b c => 0
 -- any argument in {} is an implicit argument and it will implicitly infer the type of the argument, so you don't have to explicitly write it out
 
 -- ?m.1 is an unbound meta variable
-=======
 end W02
->>>>>>> upstream/main:FPCourse/T01_ExpressionsFunctionsRecursion/W02_FunctionsSpecifications.lean

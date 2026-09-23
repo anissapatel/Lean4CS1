@@ -88,7 +88,7 @@ def varInterp : Type := Variable → Bool
 inductive PropLogicSyntax where
 | T
 | F
-| and (left right : PropLogicSyntax) : PropLogicSyntax
+| And (left right : PropLogicSyntax) : PropLogicSyntax
 | Or (left right : PropLogicSyntax) : PropLogicSyntax
 | Not (p : PropLogicSyntax)
 | Var (v : Variable)
@@ -109,7 +109,7 @@ def i : varInterp := fun (v : Variable) =>
 def eval : PropLogicSyntax → Bool
 | .T => true
 | .F => false
-| PropLogicSyntax.and p1 p2 => (eval p1) && (eval p2)
+| PropLogicSyntax.And p1 p2 => (eval p1) && (eval p2)
 | PropLogicSyntax.Or p1 p2 => (eval p1) || (eval p2)
 | PropLogicSyntax.Not p1 => !(eval p1)
 | PropLogicSyntax.Var v => i v
@@ -121,7 +121,7 @@ def eval : PropLogicSyntax → Bool
 
 def e1 := PropLogicSyntax.F
 def e2 := PropLogicSyntax.T
-def e3 := PropLogicSyntax.and e1 e2
+def e3 := PropLogicSyntax.And e1 e2
 
 
 
@@ -133,3 +133,40 @@ def e3 := PropLogicSyntax.and e1 e2
 #eval eval e1
 #eval eval e2
 #eval eval e3
+
+--===================================================
+--Propositional Logic
+--===================================================
+-- fun PQ =>   --for all intro
+--  fun i =>   --for all intro
+--    fun h => -- --> into (--> == for all)
+--      case P is true and
+          -- Qt Qf
+
+--h is a proof of not p and q
+-- h: !(P ^ q)
+  -- not (P ^ Q) --> (P ^ Q) --> false implies
+-- and.intro will construct a proof of the conjunction so if you have a proof of p hp and a proof of q hq, you can construct a proof of p ^ q
+--h (And.intro hp hq) creates this conjunction since h only takes one argument that is
+
+-- theorem DM1 :
+--   ∀ (P Q : PropLogicSyntax),
+--   ∀ (i : varInterp),
+--   ¬(P ∧ Q) ⇒ ¬P ∨ ¬Q :=
+
+-- the idea is that you dont know whether p is false or if q is false just because the whole comes back false, only p needs to be false or only q
+--logically, the proof works, but youre at a standstill when you dont know the individual value
+theorem DM1 : ∀ (P Q : Prop), ¬(P ∧ Q) → ¬P ∨ ¬Q :=
+  fun P Q => _
+    fun h => _
+
+--prove a negation by assuming something is true and proving its false
+theorem DM2 : ∀ (P Q : Prop), ¬P ∨ ¬Q → ¬(P ∧ Q) :=
+  fun P Q =>
+    fun h =>
+      fun pandq =>
+        let p : P := And.left pandq
+        let q : Q := And.right pandq
+        match h with
+        | Or.inl np => np p
+        | Or.inr nq => nq q
