@@ -253,3 +253,24 @@ precedence level (should it bind more or less tightly than *∨*?),
 decide on its associativity, and then write the *rfl* theorems
 that confirm your choices parse the way you expect.
 @@@ -/
+
+-- theorem DM1 : ∀ (P Q : Prop), ¬(P ∧ Q) → ¬P ∨ ¬Q :=
+--   fun P Q =>
+--     fun h =>
+--       Or.inl _ => _
+
+theorem DM2 : ∀ (P Q : Prop), ¬P ∨ ¬Q → ¬(P ∧ Q) :=
+  fun P _Q =>                           -- ∀ intro (twice)
+    fun h =>                            -- ∀ intro
+      fun pandq =>                      -- → intro
+        let p : P := And.left pandq     -- And.elim on left
+        let q := pandq.right            -- And.elim on right
+        match h with                    -- Or elim (by cases)
+        | Or.inl np => np p             -- → elim (fn application)
+        | Or.inr nq => nq q             -- → elim (fn application)
+
+/- @@@
+Mandatory homework: State and prove the two remaining
+variants of DeMorgan's laws, involving distribution of
+nation over disjunction (not over or).
+@@@ -/
