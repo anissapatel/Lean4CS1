@@ -157,16 +157,68 @@ def e3 := PropLogicSyntax.And e1 e2
 -- the idea is that you dont know whether p is false or if q is false just because the whole comes back false, only p needs to be false or only q
 --logically, the proof works, but youre at a standstill when you dont know the individual value
 theorem DM1 : ∀ (P Q : Prop), ¬(P ∧ Q) → ¬P ∨ ¬Q :=
-  fun P Q => _
-    fun h => _
-
---prove a negation by assuming something is true and proving its false
-theorem DM2 : ∀ (P Q : Prop), ¬P ∨ ¬Q → ¬(P ∧ Q) :=
   fun P Q =>
     fun h =>
-      fun pandq =>
-        let p : P := And.left pandq
-        let q : Q := And.right pandq
-        match h with
-        | Or.inl np => np p
-        | Or.inr nq => nq q
+      Or.inl _ => _
+
+--prove a negation by assuming something is true and proving its false
+-- theorem DM2 : ∀ (P Q : Prop), ¬P ∨ ¬Q → ¬(P ∧ Q) :=
+--   fun P Q =>
+--     fun h =>
+--       fun pandq =>
+--         let p : P := And.left pandq
+--         let q : Q := And.right pandq
+--         match h with
+--         | Or.inl np => np p
+--         | Or.inr nq => nq q
+
+--as a note, there is _Q to say you're not explicitly using it in the body of the code
+
+theorem DM2 : ∀ (P Q : Prop), ¬P ∨ ¬Q → ¬(P ∧ Q) :=
+
+  fun P _Q =>                               -- ∀ intro (twice)
+    fun h =>                                -- ∀ intro
+      fun pandq =>                          -- → intro
+        let p : P := And.left pandq         -- And.elim on left
+        let q := pandq.right                -- And.elim on right
+        match h with                        -- Or elim (by cases)
+        | Or.inl np => np p                 -- → elim (fn application)
+        | Or.inr nq => nq q                -- → elim (fn application)
+
+
+  /- @@@ Mandatory homework: State and prove the two remaining variants of DeMorgan's laws, involving distribution of nation over disjunction (not over or). @@@ -/
+
+
+theorem DM3 : ∀ (P Q : Prop), ¬(P ∨ Q) → ¬P ∧ ¬Q :=
+  fun P Q =>                  -- ∀ intro (twice)
+  fun h : ¬(P ∨ Q) =>         -- → intro (h : (P ∨ Q) → False)
+    -- We need to construct a conjunction (And.intro) of ¬P and ¬Q
+    let np : ¬P :=            -- To prove ¬P, assume p : P, derive False
+      fun p : P =>            --to prove ¬P we assume we have a proof of p of P and goal is False
+        h (Or.inl p)          -- Or.inl p constructs (P ∨ Q); apply h to get False
+    let nq : ¬Q :=            -- To prove ¬Q, assume q : Q, derive False
+      fun q : Q =>
+        h (Or.inr q)          -- Or.inr q constructs (P ∨ Q); apply h to get False
+    And.intro np nq           -- And intro
+
+theorem DM4 : ∀ (P Q : Prop), ¬P ∧ ¬Q → ¬(P ∨ Q) :=
+  fun P Q =>                  -- ∀ intro (twice)
+  fun h : ¬P ∧ ¬Q =>          -- → intro
+  fun porq : P ∨ Q =>         -- → intro contains either a proof of p or proof of q(assume P ∨ Q, derive False)
+    let np : ¬P := h.left     -- And.elim on left (np : P → False)
+    let nq : ¬Q := h.right    -- And.elim on right (nq : Q → False)
+    match porq with           -- Or elim (case analysis on P ∨ Q) tear open porq to see which case is inside
+    | Or.inl p => np p        -- If P is true, apply np to p to get False
+    | Or.inr q => nq q        -- If Q is true, apply nq to q to get False
+
+theorem notContradiction {P : Prop} : ¬(P ∧ ¬P) :=
+  fun panNotP =>
+    let p : P := panNotP.left
+    let np : ¬P := panNotP.right
+    np p
+
+
+theorem noContradiction2 {P : Prop} : ¬(P ∧ ¬P) :=
+  fun pandNotP => pandNotP.right pandNotP.left
+
+--use the strategy of proof by negation: assume true, prove not P
