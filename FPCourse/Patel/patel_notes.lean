@@ -212,13 +212,68 @@ theorem DM4 : ∀ (P Q : Prop), ¬P ∧ ¬Q → ¬(P ∨ Q) :=
     | Or.inr q => nq q        -- If Q is true, apply nq to q to get False
 
 theorem notContradiction {P : Prop} : ¬(P ∧ ¬P) :=
-  fun panNotP =>
-    let p : P := panNotP.left
-    let np : ¬P := panNotP.right
-    np p
+  fun pandNotP =>
+    let p : P := pandNotP.left
+    let np : ¬P := pandNotP.right
+    np p          -- np is a function because it is a proof of a negation that takes in P
 
 
 theorem noContradiction2 {P : Prop} : ¬(P ∧ ¬P) :=
   fun pandNotP => pandNotP.right pandNotP.left
 
 --use the strategy of proof by negation: assume true, prove not P
+
+example {P : Prop} : ¬(P ∧ ¬P) :=
+  fun{pnp : P ∧ ¬P} =>
+    pnp.right pnp.left
+
+
+inductive Dog : Type where
+  | Iris
+  | Fido
+  | Sargent
+
+  open Dog
+
+  inductive Friendly : Dog → Prop where
+    | irisFriendly : Friendly Iris
+    | fidoFriendly : Friendly Fido
+
+  inductive Furry : Dog → Prop where
+    | irisFurry : Furry Iris
+    | sargentFurry : Furry Sargent
+
+-- friendly is a proposition/predicate
+
+-- example : Friendly Iris ∧ Furry Iris := sorry
+
+--define this predicate, a predicate is a function
+-- → Prop is what signals you are working with a predicate
+--takes a dog a returns a proposition
+-- the function returns a Prop is what also signals the proposition when no →
+--moving the d : Dog to the left of the colon makes it globally available
+def Suitable (d : Dog) : Prop := Friendly d ∧ Furry d
+def Suitable' : Dog → Prop := fun d => (Friendly d ∧ Furry d)
+
+--order of friendly and furry matters
+example : Suitable Iris :=
+  And.intro Friendly.irisFriendly Furry.irisFurry
+
+#check (Suitable)
+#check (Friendly)
+
+#check (∀ (d : Dog), Friendly d)
+#check ∀ (d : Dog), Friendly d
+
+example : ∀ (d : Dog), Friendly d :=
+  fun d =>
+  match d with
+    | Iris => Friendly.irisFriendly
+    | Fido => Friendly.fidoFriendly
+    | Sargent => _    -- not possible, not friendly
+
+
+example : ¬(∀ (d : Dog), Friendly d):=
+  fun allDogsFriendly =>
+    let sf := allDogsFriendly Sargent
+    nomatch sf
