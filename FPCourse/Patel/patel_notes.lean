@@ -277,3 +277,37 @@ example : ¬(∀ (d : Dog), Friendly d):=
   fun allDogsFriendly =>
     let sf := allDogsFriendly Sargent
     nomatch sf
+
+
+-- Recursors give you total functions in Lean
+-- ex. match and def are friendlier notations
+--Nobody uses them directly, but useful to know
+-- every type has it's own recursor
+
+
+example : Empty → String := λ e => nomatch e
+
+-- noncomputable means you cant run something, no compiled code, #reduce doesn't need that
+noncomputable def fromUnit (u : Unit) : String :=
+  PUnit.rec "the one and only" u
+
+--reduce uses the kernel evaluator rather than
+--{} means you don't have to specify the type, Lean will infer it
+
+def sumUp : Nat → Nat
+    | Nat.zero => 0
+    | Nat.succ n' => (n' + 1) + sumUp n'
+
+def fac : Nat → Nat
+    | 0 => 1
+    | (n' +  1) => (n' + 1) * fac n'
+
+#eval fac 5
+
+--base case and step function
+
+def factorial (n : Nat) : Nat :=
+  Nat.rec 1 (fun n ih => (n + 1) * ih) n
+
+#eval factorial 0   -- 1
+#eval factorial 5   -- 120
