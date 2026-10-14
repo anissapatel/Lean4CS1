@@ -20,8 +20,12 @@ def arithEval (t : ArithExpr) : Nat
 def arithEval' : ArithExpr → Nat :=
   match t with
   | lit n => n
+  |plus e1 e2 => Nat.add (arithEval e1) (arithEval e2)
 
 def arithEval : ArithExpr → Nat
 | lit n => n
+
+--#eval a1Pa7 : ArithExpr := plus (lit 7) plus()
+--look at what we did for prop logic and create times in here
 
 end Arith
