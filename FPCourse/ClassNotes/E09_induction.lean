@@ -59,7 +59,7 @@ all. Take String, for example. You can for free have a
 total function from Empty to String.
 @@@ -/
 
-example : Empty → String := λ e => nomatch e
+example : Empty → String := fun e => nomatch e
 
 /- @@@
 And it's easy to see that the same principle works for
@@ -82,10 +82,12 @@ at that!
 
 #check @Empty.rec
 /- @@@
+```lean
 Empty.rec :
   (motive : Empty → Sort u_1) →   -- given a function on non-existent values
   (t : Empty) →                   -- and given any such value in particular
   motive t                        -- the function will compute an answer
+```
 @@@ -/
 
 def e2s : Empty → String :=
@@ -131,10 +133,12 @@ Empty to *any* other type *for free*.
 #check @False.rec
 
 /- @@@
+```lean
 False.rec :
   (motive : False → Sort u_1) →
   (t : False) →
   motive t
+```
 @@@ -/
 
 def fromEmpty (e : Empty) : Nat :=
@@ -170,11 +174,13 @@ polymorphic one-element type, so its recursor is named
 #check @True.rec
 
 /- @@@
+```lean
 @PUnit.rec :
   {motive : PUnit → Sort u_1} →
   motive PUnit.unit →
   (t : PUnit) →
   motive t
+```
 @@@ -/
 
 noncomputable def fromUnit (u : Unit) : String :=
@@ -201,12 +207,14 @@ constructor order.
 #check @Bool.rec
 
 /- @@@
+```lean
 @Bool.rec :
   {motive : Bool → Sort u_1} →
   motive false →
   motive true →
   (t : Bool) →
   motive t
+```
 @@@ -/
 
 noncomputable def describe (b : Bool) : String :=
@@ -214,6 +222,10 @@ noncomputable def describe (b : Bool) : String :=
 
 #reduce describe true
 #reduce describe false
+
+def deescribe' : Bool → String
+| true => "T"
+| false => "F"
 
 /- @@@
 ## Nat: a recursive constructor
@@ -228,15 +240,27 @@ rather than a one-step case split -- and it's why
 induction and recursion are, underneath, the same thing.
 @@@ -/
 
+def sumUp : Nat → Nat
+| Nat.zero => 0
+| Nat.succ n' =>(n' + 1) + sumUp n'
+
+def fac : Nat → Nat
+| 0 => 1
+| (n' + 1) => (n' + 1) * fac n'
+
+#eval fac 5
+
 #check @Nat.rec
 
 /- @@@
+```lean
 @Nat.rec :
   {motive : Nat → Sort u_1} →
   motive Nat.zero →
   ((n' : Nat) → motive n' → motive n'.succ) →
   (t : Nat) →
   motive t
+```
 @@@ -/
 
 def factorial (n : Nat) : Nat :=
@@ -262,6 +286,7 @@ library.
 #check @String.rec
 
 /- @@@
+```lean
 @String.rec :
   {motive : String → Sort u_1} →
   ((toByteArray : ByteArray) →
@@ -269,9 +294,131 @@ library.
     motive { toByteArray := toByteArray, isValidUTF8 := isValidUTF8 }) →
   (t : String) →
   motive t
+```
 @@@ -/
 noncomputable def byteLength (s : String) : Nat :=
   String.rec (fun toByteArray _ => toByteArray.size) s
 
 #reduce byteLength "hello"   -- 5
 #reduce byteLength ""        -- 0
+
+/- @@@
+## Another Example of "Proof" by Induction
+
+As a final reminder, constructing a proof of
+a universal generalization, `∀ (x : P), Q x`,
+works the same way. If there is a proof of it,
+it'll be a total function from any value, `x`
+of type (data or logical type) `T` to a proof
+that *that* `x` in particular *satisfies* `Q`,
+insofar as there is a proof of `Q x`. You need
+a total function from any `x` to proofs of `Q x`,
+Who's your total function buddy? The recursor
+for the input type, here, `T`.
+@@@ -/
+
+/- @@@
+### Every Dog is Friendly or Not
+Friendly.
+@@@ -/
+
+-- Our dogs
+inductive Dog : Type where | Iris | Fido | Sargent
+open Dog
+
+-- Property of being Friendly
+inductive Friendly : Dog → Prop where
+| irisIs : Friendly Iris
+| fidoIs : Friendly Fido
+-- Sargent is NOT friendly
+
+-- Any friendly dog is pettable (safe to pet)
+inductive Pettable : Dog → Prop
+| canPet: ∀ (d : Dog), Friendly d → Pettable d
+/- @@@
+Given any dog, d, if there is a proof that
+d is Friendly, then this constructor gives
+you a proof that d is Pettable. So, if any
+dog is friendly, then *that* dog is pettable.
+@@@ -/
+
+open  Pettable
+
+-- Iris is pettable
+example : Pettable Iris := canPet Iris Friendly.irisIs
+
+-- Fido is pettable
+example : Pettable Fido := canPet Fido Friendly.fidoIs
+
+-- Sargent is not pettable (proof by negation)
+example : ¬Pettable Sargent :=
+  fun sargIsPettable =>
+    match sargIsPettable with
+    | canPet Sargent sargentIs => nomatch sargentIs
+
+/- @@@
+Evidently, every dog that's friendly is pettable. We
+can now state this as a top-level theorem, valid given
+the particular Dog World we've modeled here.
+@@@ -/
+
+example : ∀ d, Friendly d → Pettable d
+| d, h => Pettable.canPet d h
+
+
+/- @@@
+This theorem proves that *all* dogs have the specified
+property, of being pettable if friendly. Could we just
+as well prove this theorem by induction? What would that
+even mean? Induction on what? There are no Nats here.
+
+Remember, induction is for proving universals or giving
+back total functions. Where is there a universal here?
+It's `∀ (d : Dog)`. So we'd use induction on Dog!
+@@@ -/
+
+#check Dog.rec
+
+/- @@@
+```lean
+Dog.rec.{u}
+  {motive : Dog → Sort u}
+  (Iris : motive Iris)
+  (Fido : motive Fido)
+  (Sargent : motive Sargent)
+  -- what is `motive` here?
+  -- given proofs for each dog individually
+  -- you can now have a total function
+  -- given *any* dog, it satisfies the predicate
+  (t : Dog) :
+  motive t
+```
+@@@ -/
+
+/- @@@
+Yes. Here we prove the generalization by induction
+on `Dog`, then apply it
+@@@ -/
+theorem fImpP : ∀ d, Friendly d → Pettable d
+| d, h =>
+  Dog.rec
+    (
+      Pettable.canPet d h
+    )
+    (
+       Pettable.canPet d h
+    )
+    (
+       Pettable.canPet d h
+    )
+    Sargent
+
+/- @@@
+### Take-Away
+
+You should see here that *a proof by induction on
+`Dog` is really just a proof by finite case analysis.
+More generally, case analysis emerges as just a special
+case of induction, namely on type with a finite number
+of cases.
+@@@ -/

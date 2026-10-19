@@ -193,7 +193,7 @@ I can apply this proof, `h : ∀ (x : X), P x`, to this value,
 (a : X), by writing the function application `h a` to get a
 proof of `P a`, encoding the propostion, `a` has property `P`.
 
-. The result will prove that Iris is not Sargent.
+The result will prove that Iris is not Sargent.
 That Iris is not Sargent is proved by *negation*. Assume
 Iris = Sargent, then have Lean determine that's impossible.
 There is no equality (`Eq`) constructor that can possibly
@@ -374,7 +374,7 @@ The same rule is packaged in the standard library as
 #check @Exists.elim
 ```
 
-
+```lean
 Exists.elim.{u}                 -- *IF* u is any universe level
   {α : Sort u}                  -- and if α is any type in universe u
   {p : α → Prop}                -- and if p is any property of α values
@@ -384,13 +384,14 @@ Exists.elim.{u}                 -- *IF* u is any universe level
   (h₁ : ∃ x, p x)               -- and if there is at least one x with p
   (h₂ : ∀ (a : α), p a → b)   -- and if any a has property p, then b
   :                             -- *THEN*
-  b                             -- b, by the rule of false elimination
+  b
+```                           -- b, by the rule of false elimination
 
 The main source of confusion arises from bad parsing (precedence)
 
-  - (h₂ : ∀ (a : α), p a → b) as
-  - (h₂ : (∀ (a : α), p a) → b))    -- wrong, → precedence than ∀
-  - (h₂ : ∀ (a : α), (p a → b))     -- right, → grabs (p a) and b before ∀
+- (h₂ : ∀ (a : α), p a → b) as
+- (h₂ : (∀ (a : α), p a) → b))    -- wrong, → precedence than ∀
+- (h₂ : ∀ (a : α), (p a → b))     -- right, → grabs (p a) and b before ∀
 
 So the correct reading of (h₂ : ∀ (a : α), p a → b) is "given any a, if
 a has property p then b" rather than "if every a has property p, then b".
@@ -680,7 +681,7 @@ computation ever succeeds, and that is the halting problem, which
 is known to be undecidable. So the absence of code behind `em` is
 not a gap in Lean's implementation that a better compiler might
 close. It is a theorem about computation.
-
+```lean
 Exists.elim.{u}                 -- Given u as any universe level
   {α : Sort u}                  -- α as any type in any universe
   {p : α → Prop}                -- p as any property of α values
@@ -691,7 +692,7 @@ Exists.elim.{u}                 -- Given u as any universe level
   (h₂ : ∀ (a : α), p a → b)     -- (2) if *any* -- and if every `a` having `p` means `b` is true
   :                             -- *THEN*
   b                             -- b is true
-
+```
 Example: Suppose, `h₁`, there's at least one red dog,
 and, `h₂`, if every dog is red means you needn't worry
 then `b`, you needn't worry.

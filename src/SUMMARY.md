@@ -64,6 +64,7 @@
 - [Existential Quantification](./FPCourse/ClassNotes/E07_Exists.md)
 - [More About Types](./FPCourse/ClassNotes/E08_MoreAboutTypes.md)
 - [Recursors](./FPCourse/ClassNotes/E09_induction.md)
+- [Arithmetic Expressions](./FPCourse/ClassNotes/E10_Arith.md)
 
 ---
 
