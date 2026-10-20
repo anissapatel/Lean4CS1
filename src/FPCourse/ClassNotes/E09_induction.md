@@ -384,11 +384,10 @@ theorem fImpP : ∀ d, Friendly d → Pettable d
 
 ### Take-Away
 
-You should see here that *a proof by induction on
+You should see here that a proof by induction on
 `Dog` is really just a proof by finite case analysis.
-More generally, case analysis emerges as just a special
-case of induction, namely on type with a finite number
-of cases.
+More generally, case analysis emerges as a special
+case of induction for a type with finite cases.
 
 <div class="issue-box">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
 
