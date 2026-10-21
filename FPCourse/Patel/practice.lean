@@ -240,12 +240,35 @@ end KNat
 namespace Arith
 open KNat
 
+
+inductive ArithVariable where
+  | XVar
+  | YVar
+  | ZVar
+
+
+
 --syntax (constructor so lit 7 is a term of this type ArithExpr)
 inductive ArithExpr where
 | lit (n : KNat) --this is a constructor for a literal number
 | add (e1 e2 : ArithExpr) : ArithExpr --this is a constructor for addition of two arithmetic expressions
 | sub (e1 e2 : ArithExpr) : ArithExpr --this is a constructor for subtraction of two arithmetic expressions
 | neg (e : ArithExpr) : ArithExpr --this is a constructor for unary negation of an arithmetic expression
+| var (v : ArithVariable) : ArithExpr
+
+def arithInterp : Type := ArithVariable → KNat
+def X : ArithExpr := ArithExpr.var ArithVariable.XVar
+def Y : ArithExpr := ArithExpr.var ArithVariable.YVar
+def Z : ArithExpr := ArithExpr.var ArithVariable.ZVar
+
+-- Assign numerical values to variables
+def i1 : arithInterp :=
+  fun (v : ArithVariable) =>
+    match v with
+    | ArithVariable.XVar => ktwo
+    | ArithVariable.YVar => kthree
+    | ArithVariable.ZVar => kone
+
 open ArithExpr
 
 
@@ -258,19 +281,50 @@ def e1 : ArithExpr := lit 1
 -- def e3 : ArithExpr := add e1 e7
 -- def a1Pa7 : ArithExpr := add a1 a7
 
+
+
 -- operational semantics
 --the 2 functions are the same in this case, just written in different styles
 -- def arithEval (t : ArithExpr) : Nat
 -- | lit n => n
 
-def arithEval : ArithExpr → KNat
-  | lit n => n
-  | ArithExpr.add e1 e2 => KNat.add (arithEval e1) (arithEval e2)
-  | ArithExpr.sub e1 e2 => KNat.sub (arithEval e1) (arithEval e2)
-  | ArithExpr.neg e => KNat.sub KNat.zero (arithEval e)
+-- Evaluate arithmetic expressions
+def arithEval : ArithExpr → arithInterp → KNat
+  | lit n, _ => n
+  | ArithExpr.add e1 e2, i => KNat.add (arithEval e1 i) (arithEval e2 i)
+  | ArithExpr.sub e1 e2, i=> KNat.sub (arithEval e1 i) (arithEval e2 i)
+  | ArithExpr.neg e, i => KNat.neg (arithEval e i)
+  | ArithExpr.var v, i => i v
 
 --#eval a1Pa7 : ArithExpr := plus (lit 7) plus()
---look at what we did for prop logic and create times in here
+--look at what we did for prop logic
+-- Addition: left associative
+scoped infixl:65 " + " => ArithExpr.add
+
+-- Subtraction: left associative
+scoped infixl:65 " - " => ArithExpr.sub
+
+-- Unary negation
+scoped prefix:75 "-" => ArithExpr.neg
+
+def xPlusThree : ArithExpr :=
+  ArithExpr.add
+    (ArithExpr.var ArithVariable.XVar)
+    (ArithExpr.lit kthree)
+
+def testSub : ArithExpr :=
+  ArithExpr.sub
+    (ArithExpr.lit kthree)
+    (ArithExpr.lit kone)
+
+#eval arithEval testSub i1
+-- 2
+
+def testNeg : ArithExpr :=
+  ArithExpr.neg (ArithExpr.lit kthree)
+
+#eval arithEval testNeg i1
+-- 0
 
 
 
