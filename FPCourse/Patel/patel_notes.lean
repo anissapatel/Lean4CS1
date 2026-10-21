@@ -156,10 +156,10 @@ def e3 := PropLogicSyntax.And e1 e2
 
 -- the idea is that you dont know whether p is false or if q is false just because the whole comes back false, only p needs to be false or only q
 --logically, the proof works, but youre at a standstill when you dont know the individual value
-theorem DM1 : ∀ (P Q : Prop), ¬(P ∧ Q) → ¬P ∨ ¬Q :=
-  fun P Q =>
-    fun h =>
-      Or.inl _ => _
+-- theorem DM1 : ∀ (P Q : Prop), ¬(P ∧ Q) → ¬P ∨ ¬Q :=
+--   fun P Q =>
+--     fun h =>
+--       Or.inl _ => _
 
 --prove a negation by assuming something is true and proving its false
 -- theorem DM2 : ∀ (P Q : Prop), ¬P ∨ ¬Q → ¬(P ∧ Q) :=
@@ -265,12 +265,12 @@ example : Suitable Iris :=
 #check (∀ (d : Dog), Friendly d)
 #check ∀ (d : Dog), Friendly d
 
-example : ∀ (d : Dog), Friendly d :=
-  fun d =>
-  match d with
-    | Iris => Friendly.irisFriendly
-    | Fido => Friendly.fidoFriendly
-    | Sargent => _    -- not possible, not friendly
+-- example : ∀ (d : Dog), Friendly d :=
+--   fun d =>
+--   match d with
+--     | Iris => Friendly.irisFriendly
+--     | Fido => Friendly.fidoFriendly
+--     | Sargent => _    -- not possible, not friendly
 
 
 example : ¬(∀ (d : Dog), Friendly d):=
@@ -326,3 +326,12 @@ def factorial (n : Nat) : Nat :=
 -- add is a type class, add Nat/addfoo is the instance of that type class
 -- once type class called add applied to the different types, the corresponding instances are used
 -- this is how Lean resolves overloaded functions like + and * for different types
+
+
+--LISTS:
+  -- a list can be nill
+  -- a list can be a cons of an element and another list
+  -- cons take a single number a smaller list, can think of like a stack
+  -- it is LIFO
+  -- the base case needs to be right in order to multiply all the elements in the list
+  --
