@@ -35,11 +35,13 @@ def arithEval : ArithExpr → Nat
 
 end Arith
 
+-- #############################################################################
+namespace KNat
+
 inductive KNat where
   | zero : KNat
   | succ (n : KNat) : KNat
 
-namespace KNat
 
 def inc (n : KNat) := n.succ
 
