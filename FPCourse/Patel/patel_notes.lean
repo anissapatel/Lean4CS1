@@ -311,3 +311,18 @@ def factorial (n : Nat) : Nat :=
 
 #eval factorial 0   -- 1
 #eval factorial 5   -- 120
+
+
+--syntactic symbol interpreted to semantic meaning
+--ex. + is just Nat.add
+--ex. * is just Nat.mul
+
+-- type class is a special one-constructor inductive
+-- Instance (α:Type)
+-- an instance of a type class applies to a type (like Nat, String, etc.)
+-- you should only have one instance per type
+-- you have foo, to add foo you create an instance of addfoo (can only have one addfoo instance)
+-- one instance per type that you want to add
+-- add is a type class, add Nat/addfoo is the instance of that type class
+-- once type class called add applied to the different types, the corresponding instances are used
+-- this is how Lean resolves overloaded functions like + and * for different types

@@ -223,6 +223,19 @@ instance : Sub KNat where
 
 #eval sub ktwo ktwo
 
+def KNat.eq : KNat → KNat → Bool
+  | KNat.zero, KNat.zero => true
+  | KNat.succ a, KNat.succ b => KNat.eq a b
+  | _, _ => false
+
+def le : KNat → KNat → Bool
+  | (KNat.succ a), (KNat.succ b) => le a b
+  | KNat.succ _, KNat.zero => false
+  | KNat.zero, _ => true
+
+def gt : KNat → KNat → Bool :=
+  fun a b => !le a b
+
 -- Since KNat represents only natural numbers, unary negation is implemented as truncated subtraction from zero.
 --Therefore, the result is zero for every KNat value
 def neg (a : KNat) : KNat :=
@@ -230,6 +243,7 @@ def neg (a : KNat) : KNat :=
 
 instance : Neg KNat where
   neg := KNat.neg
+
 
 #eval -kthree
 #eval -ktwo
@@ -255,6 +269,15 @@ inductive ArithExpr where
 | sub (e1 e2 : ArithExpr) : ArithExpr --this is a constructor for subtraction of two arithmetic expressions
 | neg (e : ArithExpr) : ArithExpr --this is a constructor for unary negation of an arithmetic expression
 | var (v : ArithVariable) : ArithExpr
+
+instance : Add ArithExpr where
+  add := ArithExpr.add
+
+instance : Sub ArithExpr where
+  sub := ArithExpr.sub
+
+instance : Neg ArithExpr where
+  neg := ArithExpr.neg
 
 def arithInterp : Type := ArithVariable → KNat
 def X : ArithExpr := ArithExpr.var ArithVariable.XVar
@@ -299,13 +322,6 @@ def arithEval : ArithExpr → arithInterp → KNat
 --#eval a1Pa7 : ArithExpr := plus (lit 7) plus()
 --look at what we did for prop logic
 -- Addition: left associative
-scoped infixl:65 " + " => ArithExpr.add
-
--- Subtraction: left associative
-scoped infixl:65 " - " => ArithExpr.sub
-
--- Unary negation
-scoped prefix:75 "-" => ArithExpr.neg
 
 def xPlusThree : ArithExpr :=
   ArithExpr.add
@@ -326,7 +342,22 @@ def testNeg : ArithExpr :=
 #eval arithEval testNeg i1
 -- 0
 
+def testVars : ArithExpr :=
+  X + Y
 
+#eval arithEval testVars i1
+-- 5
 
+def testPrecedence : ArithExpr :=
+  -X + Y
+
+#eval arithEval testPrecedence i1
+-- 3
+
+def testParentheses : ArithExpr :=
+  -(X + Y)
+
+#eval arithEval testParentheses i1
+-- 0
 
 end Arith
