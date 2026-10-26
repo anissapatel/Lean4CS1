@@ -61,7 +61,7 @@ instance : One KNat where
   one := kone
 
 def mul : KNat → KNat → KNat
-  | a, 0 => 0
+  | _, 0 => 0
   | a, KNat.succ b => add a (mul a b)
 
 -- 2. Register '+' for KNat
