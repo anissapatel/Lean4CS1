@@ -335,3 +335,140 @@ def factorial (n : Nat) : Nat :=
   -- it is LIFO
   -- the base case needs to be right in order to multiply all the elements in the list
   --
+
+  -- option/maybe
+  -- a value of type Option α is either none or some a, where a : α
+  -- useful for representing values that may or may not exist
+  -- either none or some value of that type
+  def dec : Nat → Option Nat
+   | 0 => none
+   | (n' + 1) => Option.some n'
+
+  -- List α
+  -- | nil
+  -- | cons (h : α) (l : List α)
+  -- cons is construct a list with a head element and a tail list (rest of the list)
+  -- if the list is empty there is no head
+  -- same as the decrement of 0, return none
+
+-- describe a custom list type called MyList
+inductive MyList (α : Type) : Type where
+  | nil
+  | cons (h : α) (t : MyList α)
+
+--polymorphic function called head that returns the first element of a list, if one exists
+def head {α : Type} : List α → Option α
+  | List.nil => none
+  | List.cons h _ => some h
+
+def head' {α : Type} : List α → Option α
+  | [] => none
+  | h :: _ => some h
+
+
+--recursive fold function! The main idea is that it takes a list and combines all its elements into one final value using a function you provide
+def myfold {α : Type} (f : α → α → α) (id : α) : List α → α
+  | [] => id
+  | h :: t => f h (myfold f id t)
+
+#eval myfold Nat.add 0 []
+#eval myfold Nat.add 0 [1]
+#eval myfold Nat.add 0 [1, 2]
+
+#eval myfold Nat.mul 1 []
+#eval myfold Nat.mul 1 [1]
+#eval myfold Nat.mul 1 [1, 2, 3, 4, 5]
+
+def myfold2
+  {α : Type }
+  (f : α → α → α)
+  (f_assoc : ∀ (a b c : α ), f (f a b) c = f a (f b c))
+  (id : α)
+  (fid : ∀ a, f id a = a ∧ f a id = a)
+  : List α → α
+  | [] => id
+  | h :: t => f h (myfold f id t)
+
+
+-- tree objects
+-- a tree is either a leaf or a node with a value and two subtrees
+inductive MyTree (α : Type) : Type where
+  | leaf
+  | node (v : α) (l r : MyTree α)
+
+
+-- every monoid we've written is parameterized by a concrete type, monoid Nat is about Nat,
+-- when talking about container types, talking about type builders, the type of option is type → type
+-- list nat yields list nat, etc
+-- tree nat is the type of
+
+class Foldable (F : Type → Type) where
+  foldr {α β : Type} : (α → β → β) → β → F α → β
+
+def treeFoldr {α β : Type} (f : α → β → β) (z : β) : MyTree α → β
+  | MyTree.leaf => z
+  | MyTree.node v l r => f v (treeFoldr f (treeFoldr f z r) l)
+
+  --container type F in toList{F : Type → Type} (α : Type) (xs : F α) : List α
+  --alpha is the element type
+  --xs can be a list of alpha values, or a tree of alpha values, as long as it satisfies the container of values
+
+-- multiplication is just many additions
+-- exponentiation is just many multiplications
+-- tetration is just many exponentiations
+
+/-! @@@
+# November 2 Notes:
+@@@ -/
+
+
+  --Monoid: a collection with an associative binary operation and an identity element
+  --Examples of monoids include:
+  -- Nat with addition and 0
+  -- Nat with multiplication and 1
+  -- List with concatenation and the empty list
+
+  -- class monoid (α : Type) where
+  --   op: α → α → α
+  --   id: α
+  --   assoc: ∀ a b c : α, op (op a b) c = op a (op b c)
+  --   left_id: ∀ a, op id a = a
+  --   right_id: ∀ a, op a id = a
+
+
+--To be a Monoid, a type just needs:A Set of Items: A bucket of stuff you're working with (like numbers, lists, or strings).
+--A "Glue" Operation · : A way to take two items and combine them into one item of the same type.
+--A "Do Nothing" Item ($e$): A special identity element that changes nothing when you glue it to something else.
+
+
+--if we have a clock, the action is to move the time along 12pm + 4 hours is 4pm
+--the identity is like a self loop on itself, time doesnt change
+-- it points are pairs of rationals and vectors as pairs of rationals
+-- you cant add points to each other, cant add 3pm + 5pm, it doesnt make sense
+-- you can say say 12 → 2 but not 0 → .5, but if you say diregard that, then it's no longer a vector space
+  -- to have a vector space, you need to be able to take the multiplicative inverse
+  -- the scalers need to be more than a monoid
+-- b-a is b × additive inverse of a
+-- this is similar to how subtraction is defined in terms of addition and the additive inverse
+-- field, ring, group, monoid
+-- a field is a ring where every non-zero element has a multiplicative inverse
+-- a ring is a set with two operations, addition and multiplication, where addition forms an abelian group, multiplication is associative, and multiplication distributes over addition
+  -- can have a ring for matrices, polynomials, etc. can have some actions on it but not all matrices are invertible for example
+-- a group is a monoid where every element has an inverse
+  -- a group is symmentry preserving actions
+  -- sets of actions that preserve a structure, actions, that can be undone
+  -- can use that to solve equations
+-- a monoid is a set with an associative binary operation and an identity element
+
+
+--A group: a monoid where you can undo actions (essentially)
+-- inverse/cancel the action
+-- inverse of 0 is 0 (do nothing identity)
+-- inverse of 2 is 1
+-- think of a group as a collections of actions, like addition, where you can also undo
+
+
+-- torsor over a group
+-- given a group G, a torsor over G is a set X with a free and transitive action of G on X
+-- given our clock example, the set of times on the clock is a torsor over the group of hour increments
+-- can only have three elements in the torsor if the group has three elements
