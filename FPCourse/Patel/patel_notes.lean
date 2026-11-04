@@ -472,3 +472,26 @@ def treeFoldr {α β : Type} (f : α → β → β) (z : β) : MyTree α → β
 -- given a group G, a torsor over G is a set X with a free and transitive action of G on X
 -- given our clock example, the set of times on the clock is a torsor over the group of hour increments
 -- can only have three elements in the torsor if the group has three elements
+
+/-! @@@
+# November 4 Notes:
+@@@ -/
+
+--idRight is a proof of for all a integers where after the := comes the proof term
+-- the inverse field of this group is the definition of the regular invere function
+-- Fin 3 is the finite natural number from 0, 1, 2
+-- if you have fin 5 and add 3 + 3 you get 1 (mod n = 5)  it rolls over
+-- instance : Group (Fin 3) where
+--   op : Fin 3 → Fin 3 → Fin 3 → Fin 3 := (· + ·)
+-- for a group you need addition, additive inverse, associativity, identity, operator?
+-- when you think of a vector space, think of a collection of actions
+-- points on the clock are torsors and the vectors are the differences between points
+-- a torsor can take 2 type arguments, where G is a group and T is your torsor, what the group of vectors act on
+-- class Torsor (G T : Type) where
+--   [groupG : Group G]
+--   act : G → T → T
+--   actId : ∀ t : T, act groupG.id t = t
+-- the group determines the underlying structure of the torsor
+-- if your group is clock then you have to have 12 torsors
+-- T is the set of points plus a group action on those points which is the G and T which is a torsor
+--
