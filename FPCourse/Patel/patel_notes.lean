@@ -502,3 +502,5 @@ def treeFoldr {α β : Type} (f : α → β → β) (z : β) : MyTree α → β
 
 -- Affine space is a set of points with a vector space acting on it in a free and transitive manner
 -- essentially, it is a torsor over a vector space
+--((1,2)) - inside () create a pair of rational numbers, outside () create a vector from that pair
+--the vectors coordinates are the sums of the underlying pairs of rationals
