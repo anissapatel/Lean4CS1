@@ -495,3 +495,10 @@ def treeFoldr {α β : Type} (f : α → β → β) (z : β) : MyTree α → β
 -- if your group is clock then you have to have 12 torsors
 -- T is the set of points plus a group action on those points which is the G and T which is a torsor
 --
+
+/-! @@@
+# November 9 Notes:
+@@@ -/
+
+-- Affine space is a set of points with a vector space acting on it in a free and transitive manner
+-- essentially, it is a torsor over a vector space
