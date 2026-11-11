@@ -504,3 +504,15 @@ def treeFoldr {α β : Type} (f : α → β → β) (z : β) : MyTree α → β
 -- essentially, it is a torsor over a vector space
 --((1,2)) - inside () create a pair of rational numbers, outside () create a vector from that pair
 --the vectors coordinates are the sums of the underlying pairs of rationals
+
+/-! @@@
+# November 11 Notes:
+@@@ -/
+
+--monoid is an identity and
+--a group is a monoid with an inverse where you can go back/undo
+--semiring has plus and multiplication where _____
+--ring now gives you a second operation multiplication (that doesnt need to be invertable) and also plus
+  --plus needs to be invertable in a ring
+--a field makes the multiplication invertable (except for 0)
+--
