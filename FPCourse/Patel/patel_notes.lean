@@ -512,7 +512,17 @@ def treeFoldr {α β : Type} (f : α → β → β) (z : β) : MyTree α → β
 --monoid is an identity and
 --a group is a monoid with an inverse where you can go back/undo
 --semiring has plus and multiplication where _____
+  -- in general no additive inverse, so you cant subtract
+  -- there is a relational subtraction operator (no longer a semiring?)
+  -- a semiring has a multiplicative identity and an additive identity
 --ring now gives you a second operation multiplication (that doesnt need to be invertable) and also plus
   --plus needs to be invertable in a ring
 --a field makes the multiplication invertable (except for 0)
+
+
+/-! @@@
+# November 11 Notes:
+@@@ -/
+
+--specification → formal specification → implementation
 --
