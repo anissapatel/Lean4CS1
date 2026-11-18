@@ -521,8 +521,19 @@ def treeFoldr {α β : Type} (f : α → β → β) (z : β) : MyTree α → β
 
 
 /-! @@@
-# November 11 Notes:
+# November 16 Notes:
 @@@ -/
 
 --specification → formal specification → implementation
+--
+
+/-! @@@
+# November 18 Notes:
+@@@ -/
+
+--just because its formalized and verified doesnt mean you verified the right thing
+--back to verification vs validation, verification is proving that the implementation meets the specification, validation is proving that the specification meets the requirements
+--verfification is did you build the thing right?, validation is did you build the right thing?
+--verification is pretty much solved but validation is not
+--henry petrosky wrote engineering books, design paradigms - the principle of engineers is the make sure you avoid failures that will cause harm to the public
 --
